@@ -1,0 +1,21 @@
+version: "3.8"
+
+services:
+  dynamodb-local:
+    image: "amazon/dynamodb-local"
+    container_name: dynamodb-local
+    ports:
+      - "4024:8000"
+    # volumes:
+    #   - ./scripts/create-resources.sh:/create-resources.sh
+
+  localstack:
+    image: localstack/localstack:latest
+    ports:
+      - 4566:4566
+    volumes:
+      - ./scripts/create-resources.sh:/etc/localstack/init/ready.d/script.sh
+      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock

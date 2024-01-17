@@ -11,7 +11,9 @@ export class YoutubeDL {
    * @param videoId
    * @returns Promise<VideoMetaDataType | null>
    */
-  public async getMetadata(videoId: string): Promise<VideoMetaDataType | null> {
+  public async getMetadata(
+    videoId: string
+  ): Promise<VideoMetaDataType | null | string> {
     try {
       const url = this.constructMediaUrl(videoId);
 
@@ -32,6 +34,7 @@ export class YoutubeDL {
 
       return metadata;
     } catch (error) {
+      console.error(error);
       return null;
     }
   }

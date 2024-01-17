@@ -1,12 +1,12 @@
 import { injectable } from "tsyringe";
 
 import { IServiceHelper } from "@shared/@types/api-response.type";
+import { ValidateVideoIdAndProcessRequestType } from "@shared/@types/entrypoint.type";
 import { VideoMetaDataType } from "@shared/@types/youtube-dl.type";
 import { SQSEvent } from "@shared/enum/aws.enum";
 import { AWSDynamoDB } from "@shared/utils/aws/dynamodb.util";
 import { AWSSqs } from "@shared/utils/aws/sqs.util";
 import { YoutubeDL } from "@shared/utils/youtube-dl/youtube-dl.util";
-import { ValidateVideoIdAndProcessRequestType } from "@shared/@types/entrypoint.type";
 
 // TODO: Factor in spotify validation
 @injectable()
@@ -31,17 +31,23 @@ export class EntryPointService {
         return { status: "successful", message: _successMessage };
       }
 
+      console.log(
+        this.youtubeDl,
+        Object.getPrototypeOf(this.youtubeDl),
+        this.youtubeDl.getMetadata
+      );
+
       const metaData = await this.youtubeDl.getMetadata(video_id);
       if (!metaData)
         return { status: "bad-request", message: "Invalid video_id" };
 
       const { status, message } = await this.processNewMediaUpload(
-        metaData,
+        metaData as any,
         video_id
       );
       if (!status) return { status: "bad-request", message };
 
-      return { status: "successful", message: _successMessage };
+      return { status: "successful", message: _successMessage, data: metaData };
     } catch (error) {
       return {
         status: "bad-request",

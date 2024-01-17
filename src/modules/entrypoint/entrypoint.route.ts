@@ -10,7 +10,9 @@ export const entryPointRoutes = (routerInstance: Router) => {
   const _routePrefix = "entrypoint";
 
   routerInstance.post(
-    `${_routePrefix}/upload`,
-    _baseController.validateVideoIdAndProcessRequest,
+    `/${_routePrefix}/upload`,
+    _baseController.validateVideoIdAndProcessRequest
   );
+
+  return routerInstance;
 };

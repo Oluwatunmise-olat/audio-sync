@@ -6,7 +6,8 @@ async function bootstrap() {
 
   // Handle Graceful Shutdown
   process
-    .on("uncaughtException", (_error) => {
+    .on("uncaughtException", (error) => {
+      console.error("Uncaught exception", { err: error });
       server.close();
       process.exit(1);
     })
@@ -14,6 +15,8 @@ async function bootstrap() {
       server.close();
       process.exit(1);
     });
+
+  console.log("server started 🚀");
 }
 
 bootstrap();

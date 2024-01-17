@@ -23,19 +23,11 @@ export class EntryPointService {
     try {
       const _successMessage =
         "Your request has been received and would be processed shortly.";
-
       const mediaRecord = await this.dynamodb.getRecord(video_id);
-
       if (mediaRecord) {
-        await this.processExistingMediaUpload(video_id);
+        await this.pushToQueue(video_id, SQSEvent.PROCESS_MEDIA_STREAM);
         return { status: "successful", message: _successMessage };
       }
-
-      console.log(
-        this.youtubeDl,
-        Object.getPrototypeOf(this.youtubeDl),
-        this.youtubeDl.getMetadata
-      );
 
       const metaData = await this.youtubeDl.getMetadata(video_id);
       if (!metaData)
@@ -77,18 +69,15 @@ export class EntryPointService {
       };
     }
 
-    await this.sqs.push({
-      video_id,
-      event_type: SQSEvent.PROCESS_MEDIA_DOWNLOAD,
-    });
+    await this.pushToQueue(video_id, SQSEvent.PROCESS_MEDIA_DOWNLOAD);
 
     return { status: true, message: "processed" };
   }
 
-  private async processExistingMediaUpload(video_id: string) {
+  private async pushToQueue(video_id: string, event_type: SQSEvent) {
     await this.sqs.push({
       video_id,
-      event_type: SQSEvent.PROCESS_MEDIA_STREAM,
+      event_type,
     });
   }
 }

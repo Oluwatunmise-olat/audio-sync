@@ -11,10 +11,10 @@ export class EntryPointController {
 
   validateVideoIdAndProcessRequest = async (
     request: Request,
-    response: Response
+    response: Response,
   ) => {
     const data = await this.entryPointService.validateVideoIdAndProcessRequest(
-      request.body as unknown as ValidateVideoIdAndProcessRequestType
+      request.body as unknown as ValidateVideoIdAndProcessRequestType,
     );
 
     return convertResponse(response, data);

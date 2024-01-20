@@ -11,7 +11,7 @@ export const entryPointRoutes = (routerInstance: Router) => {
 
   routerInstance.post(
     `/${_routePrefix}/upload`,
-    _baseController.validateVideoIdAndProcessRequest
+    _baseController.validateVideoIdAndProcessRequest,
   );
 
   return routerInstance;

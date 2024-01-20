@@ -16,7 +16,7 @@ export class EntryPointService {
   constructor(
     private readonly youtubeDl: YoutubeDL,
     private readonly dynamodb: AWSDynamoDB,
-    private readonly sqs: AWSSqs
+    private readonly sqs: AWSSqs,
   ) {}
 
   async validateVideoIdAndProcessRequest({
@@ -37,7 +37,7 @@ export class EntryPointService {
 
       const { status, message } = await this.processNewMediaUpload(
         metaData as any,
-        video_id
+        video_id,
       );
       if (!status) return { status: "bad-request", message };
 
@@ -53,7 +53,7 @@ export class EntryPointService {
 
   private async processNewMediaUpload(
     payload: VideoMetaDataType,
-    video_id: string
+    video_id: string,
   ) {
     const uploaded = await this.dynamodb.save({
       duration: payload.duration,

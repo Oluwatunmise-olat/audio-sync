@@ -9,6 +9,8 @@ import { AWSSqs } from "@shared/utils/aws/sqs.util";
 import { YoutubeDL } from "@shared/utils/youtube-dl/youtube-dl.util";
 
 // TODO: Factor in spotify validation
+// Max video length of 30 mins due
+// Email for notification ses
 @injectable()
 export class EntryPointService {
   constructor(

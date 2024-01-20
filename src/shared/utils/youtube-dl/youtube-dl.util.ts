@@ -1,5 +1,5 @@
 import { injectable } from "tsyringe";
-import YouTubeDL from "youtube-dl-exec";
+import ytdl from "ytdl-core";
 
 import { VideoMetaDataType } from "@shared/@types/youtube-dl.type";
 
@@ -11,30 +11,35 @@ export class YoutubeDL {
    * @param videoId
    * @returns Promise<VideoMetaDataType | null>
    */
-  public async getMetadata(
-    videoId: string
-  ): Promise<VideoMetaDataType | null | string> {
+  public async getMetadata(videoId: string): Promise<VideoMetaDataType | null> {
     try {
       const url = this.constructMediaUrl(videoId);
 
-      const media = await YouTubeDL(url, {
-        dumpSingleJson: true,
-        noWarnings: true,
-        noPlaylist: true,
-      });
+      const media = await ytdl.getBasicInfo(url);
 
       const metadata: VideoMetaDataType = {
-        duration: media.duration,
-        title: media.title,
-        uploader: media.uploader,
-        upload_date: media.upload_date,
-        original_url: media.original_url,
-        format: media.format,
+        duration: media.videoDetails.lengthSeconds,
+        title: media.videoDetails.title,
+        uploader: media.videoDetails.author.name,
+        upload_date: media.videoDetails.uploadDate,
+        original_url: media.videoDetails.video_url,
       };
 
       return metadata;
     } catch (error) {
-      console.error(error);
+      console.error("Error fetching media metadata:", error.message);
+      return null;
+    }
+  }
+
+  public getAudioStream(videoId: string) {
+    try {
+      const url = this.constructMediaUrl(videoId);
+      const mediaStream = ytdl(url, { filter: "audioonly" });
+
+      return mediaStream;
+    } catch (error) {
+      console.error("Error downloading media audio:", error.message);
       return null;
     }
   }

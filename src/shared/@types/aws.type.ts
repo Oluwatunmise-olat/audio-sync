@@ -9,7 +9,7 @@ export type PushToSqsType = {
 
 export type SaveMetaDataToDynamodbType = {
   title: string;
-  duration: number;
+  duration: string;
   uploader: string;
   upload_date: string;
   video_id: string;

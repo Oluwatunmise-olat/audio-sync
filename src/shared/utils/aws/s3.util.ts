@@ -1,5 +1,5 @@
-import { PutObjectCommandInput, S3Client } from "@aws-sdk/client-s3"; // Correct import for PutObjectCommand
-import { Upload } from "@aws-sdk/lib-storage"; // Import for ManagedUpload
+import { PutObjectCommandInput, S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
 import { singleton } from "tsyringe";
 
 import { awsConf } from "./constants";

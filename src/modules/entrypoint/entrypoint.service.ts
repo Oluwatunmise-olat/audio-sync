@@ -55,9 +55,18 @@ export class EntryPointService {
   }
 
   public async testServices(): Promise<IServiceHelper> {
+    const dynamodbData = await this.dynamodb.getRecord("test_123");
+
+    await this.pushToQueue(
+      "test_123",
+      "mailto@no-reply.com",
+      SQSEvent.PROCESS_MEDIA_STREAM,
+    );
+
     return {
       status: "successful",
       message: "Successful Api Call",
+      data: { dynamodb: dynamodbData },
     };
   }
 
@@ -103,5 +112,3 @@ export class EntryPointService {
     });
   }
 }
-
-// test connection to dynamodb, sqs and ses from render

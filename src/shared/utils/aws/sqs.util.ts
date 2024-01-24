@@ -1,4 +1,5 @@
 import {
+  DeleteMessageCommand,
   SQSClient,
   SendMessageCommand,
   SendMessageCommandInput,
@@ -31,6 +32,26 @@ export class AWSSqs {
       return true;
     } catch (error) {
       console.error("[AWSSqs]: push Error pushing to SQS:", error.message);
+      return null;
+    }
+  }
+
+  async delete(messageReceipt: string) {
+    try {
+      await this.sqs.send(
+        new DeleteMessageCommand({
+          QueueUrl: this.queueURL,
+          ReceiptHandle: messageReceipt,
+        }),
+      );
+
+      return true;
+    } catch (error) {
+      console.error(
+        "[AWSSqs]: delete Error deleting message from SQS:",
+        error.message,
+      );
+
       return null;
     }
   }

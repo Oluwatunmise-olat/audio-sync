@@ -25,6 +25,7 @@ export const handler = async (event, _context) => {
       _meta: {
         event_type: parsedEvent.event_type,
         media_id: parsedEvent.video_id,
+        record: event?.Records ?? "",
       },
     },
   };

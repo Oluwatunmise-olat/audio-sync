@@ -57,6 +57,8 @@ export class EntryPointService {
   public async testServices(): Promise<IServiceHelper> {
     const dynamodbData = await this.dynamodb.getRecord("test_123");
 
+    console.log("dynamodb Response ===>", dynamodbData);
+
     await this.pushToQueue(
       "test_123",
       "mailto@no-reply.com",
@@ -66,7 +68,7 @@ export class EntryPointService {
     return {
       status: "successful",
       message: "Successful Api Call",
-      data: { dynamodb: dynamodbData },
+      data: { dynamodb: dynamodbData, service: "olatb" },
     };
   }
 

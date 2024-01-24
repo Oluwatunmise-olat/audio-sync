@@ -7,7 +7,6 @@ import { SQSEvent } from "@shared/enum/aws.enum";
 import { AWSDynamoDB } from "@shared/utils/aws/dynamodb.util";
 import { AWSSqs } from "@shared/utils/aws/sqs.util";
 import { YoutubeDL } from "@shared/utils/youtube-dl/youtube-dl.util";
-import conf from "@config/conf";
 
 // TODO:
 // Add Validation: Max video length of 30 mins due to limited compute resource

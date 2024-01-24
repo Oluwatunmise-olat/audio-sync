@@ -11,7 +11,7 @@ export const convertResponse = (response: Response, data: IServiceHelper) => {
         meta: data.meta,
         data: data.data,
       });
-    case "bad-request":
+    case "bad_request":
       return badRequestResponse({
         response,
         message: data.message,

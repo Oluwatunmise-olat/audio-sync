@@ -35,19 +35,19 @@ export class EntryPointService {
 
       const metaData = await this.youtubeDl.getMetadata(video_id);
       if (!metaData)
-        return { status: "bad-request", message: "Invalid video_id" };
+        return { status: "bad_request", message: "Invalid video_id" };
 
       const { status, message } = await this.processNewMediaUpload(
         metaData as any,
         video_id,
         email,
       );
-      if (!status) return { status: "bad-request", message };
+      if (!status) return { status: "bad_request", message };
 
       return { status: "successful", message: _successMessage, data: metaData };
     } catch (error) {
       return {
-        status: "bad-request",
+        status: "bad_request",
         message:
           "Could not process your request at the moment. Please try again later",
       };

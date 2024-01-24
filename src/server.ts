@@ -1,7 +1,9 @@
+import "dotenv/config";
+import conf from "@config/conf";
 import app from "./app";
 
 async function bootstrap() {
-  const PORT = 1124; // Cleanup after deployment to use env;
+  const PORT = conf.app.port;
   const server = app.listen(PORT);
 
   process
@@ -15,7 +17,7 @@ async function bootstrap() {
       process.exit(1);
     });
 
-  console.log("[app]: server started ✅");
+  console.log(`[app]: server started ✅ on port ${PORT} 🚀`);
 }
 
 bootstrap();

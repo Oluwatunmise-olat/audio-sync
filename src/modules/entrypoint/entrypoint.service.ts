@@ -59,7 +59,6 @@ export class EntryPointService {
     return {
       status: "successful",
       message: "Successful Api Call",
-      data: { _meta: conf.aws.sqs.url }, // Remove after testing
     };
   }
 
@@ -106,4 +105,4 @@ export class EntryPointService {
   }
 }
 
-// connect to dynamodb, sqs and ses from render
+// test connection to dynamodb, sqs and ses from render

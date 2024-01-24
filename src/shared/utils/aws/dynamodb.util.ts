@@ -55,6 +55,8 @@ export class AWSDynamoDB {
       };
       const record = await this.dynamodb.send(new GetItemCommand(params));
 
+      console.log(record, "Record");
+
       return record.Item ? record.Item.Item : null;
     } catch (error) {
       console.error(

@@ -6,14 +6,19 @@ import {
 import { singleton } from "tsyringe";
 
 import { PushToSqsType } from "@shared/@types/aws.type";
-import { awsConf } from "./constants";
+import conf from "@config/conf";
 
 @singleton()
 export class AWSSqs {
   private readonly sqs = new SQSClient({
-    endpoint: awsConf.endpoint,
+    credentials: {
+      accessKeyId: conf.aws.access_key_id,
+      secretAccessKey: conf.aws.secret_access_key,
+    },
+    region: conf.aws.region,
   });
-  private readonly queueURL = awsConf.sqs_url;
+
+  private readonly queueURL = conf.aws.sqs.url;
 
   async push(payload: PushToSqsType) {
     try {

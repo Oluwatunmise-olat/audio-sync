@@ -7,6 +7,7 @@ import { SQSEvent } from "@shared/enum/aws.enum";
 import { AWSDynamoDB } from "@shared/utils/aws/dynamodb.util";
 import { AWSSqs } from "@shared/utils/aws/sqs.util";
 import { YoutubeDL } from "@shared/utils/youtube-dl/youtube-dl.util";
+import conf from "@config/conf";
 
 // TODO:
 // Add Validation: Max video length of 30 mins due to limited compute resource
@@ -35,19 +36,19 @@ export class EntryPointService {
 
       const metaData = await this.youtubeDl.getMetadata(video_id);
       if (!metaData)
-        return { status: "bad-request", message: "Invalid video_id" };
+        return { status: "bad_request", message: "Invalid video_id" };
 
       const { status, message } = await this.processNewMediaUpload(
         metaData as any,
         video_id,
         email,
       );
-      if (!status) return { status: "bad-request", message };
+      if (!status) return { status: "bad_request", message };
 
       return { status: "successful", message: _successMessage, data: metaData };
     } catch (error) {
       return {
-        status: "bad-request",
+        status: "bad_request",
         message:
           "Could not process your request at the moment. Please try again later",
       };
@@ -55,7 +56,11 @@ export class EntryPointService {
   }
 
   public async testServices(): Promise<IServiceHelper> {
-    return { status: "successful", message: "Successful Api Call" };
+    return {
+      status: "successful",
+      message: "Successful Api Call",
+      data: { _meta: conf.aws.sqs.url }, // Remove after testing
+    };
   }
 
   private async processNewMediaUpload(

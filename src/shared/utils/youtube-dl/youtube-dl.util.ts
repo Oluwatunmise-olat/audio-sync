@@ -16,7 +16,6 @@ export class YoutubeDL {
       const url = this.constructMediaUrl(videoId);
 
       const media = await ytdl.getBasicInfo(url);
-
       const metadata: VideoMetaDataType = {
         duration: media.videoDetails.lengthSeconds,
         title: media.videoDetails.title,
@@ -27,19 +26,28 @@ export class YoutubeDL {
 
       return metadata;
     } catch (error) {
-      console.error("Error fetching media metadata:", error.message);
+      console.error(
+        "[YoutubeDL]: Error fetching media metadata:",
+        error.message,
+      );
       return null;
     }
   }
 
-  public getAudioStream(videoId: string) {
+  public async getAudioStream(videoId: string) {
     try {
       const url = this.constructMediaUrl(videoId);
-      const mediaStream = ytdl(url, { filter: "audioonly" });
+
+      const mediaStream = ytdl(url, {
+        filter: "audioonly",
+      });
 
       return mediaStream;
     } catch (error) {
-      console.error("Error downloading media audio:", error.message);
+      console.error(
+        "[YoutubeDL]: Error downloading media audio",
+        error.message,
+      );
       return null;
     }
   }

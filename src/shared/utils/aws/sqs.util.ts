@@ -22,10 +22,11 @@ export class AWSSqs {
         MessageBody: JSON.stringify(payload),
       };
 
-      const result = await this.sqs.send(new SendMessageCommand(params));
-      console.log(result, "SQS message sent successfully");
+      await this.sqs.send(new SendMessageCommand(params));
+      return true;
     } catch (error) {
-      console.error("Error pushing to SQS:", error.message);
+      console.error("[AWSSqs]: push Error pushing to SQS:", error.message);
+      return null;
     }
   }
 }

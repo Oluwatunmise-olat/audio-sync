@@ -20,6 +20,7 @@ export class AWSDynamoDB {
 
   async save(payload: SaveMetaDataToDynamodbType) {
     try {
+      // TODO: Rethink schema
       const params: PutItemInput = {
         TableName: this.table,
         Item: {
@@ -33,11 +34,12 @@ export class AWSDynamoDB {
       };
 
       await this.dynamodb.send(new PutItemCommand(params));
-      console.log("Item saved to DynamoDB successfully");
-
       return true;
     } catch (error) {
-      console.error("Error saving to DynamoDB:", error.message);
+      console.error(
+        "[AWSDynamoDB]: save Error saving to DynamoDB:",
+        error.message,
+      );
       return false;
     }
   }
@@ -48,12 +50,14 @@ export class AWSDynamoDB {
         Key: { video_id: { S: video_id } },
         TableName: this.table,
       };
-
       const record = await this.dynamodb.send(new GetItemCommand(params));
 
       return record.Item ? record.Item.Item : null;
     } catch (error) {
-      console.error("Error fetching record from DynamoDB:", error.message);
+      console.error(
+        "[AWSDynamoDB]: getRecord Error fetching record from DynamoDB:",
+        error.message,
+      );
     }
   }
 }

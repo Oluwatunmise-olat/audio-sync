@@ -7,6 +7,5 @@ export type EntryPointType = {
 
 export type ValidateVideoIdAndProcessRequestType = {
   video_id: string;
-  email?: string;
-  spotify_token?: string;
+  email: string;
 };

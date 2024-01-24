@@ -11,6 +11,8 @@
     "aws-sdk": "^2.1536.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "ffmpeg-static": "^5.2.0",
+    "fluent-ffmpeg": "^2.1.2",
     "helmet": "^7.1.0",
     "ioredis": "^5.3.2",
     "module-alias": "^2.2.3",
@@ -22,6 +24,8 @@
     "@commitlint/cli": "^18.4.4",
     "@commitlint/config-conventional": "^18.4.4",
     "@types/express": "^4.17.21",
+    "@types/fluent-ffmpeg": "^2.1.24",
+    "@types/node": "^20.11.5",
     "husky": "4",
     "prettier": "^3.2.2",
     "ts-node": "^10.9.2",
@@ -30,18 +34,15 @@
     "typescript": "^5.3.3"
   },
   "_moduleAliases": {
+    "@src": "src",
     "@config": "src/config",
     "@modules": "src/modules",
     "@shared": "src/shared"
   },
   "scripts": {
-    "prepare": "husky install",
-    "app:build": "tsc && tsc-alias",
+    "app:build": "rm -rf dist && tsc && tsc-alias",
     "start:dev": "ts-node -r module-alias/register ./src/server.ts",
     "commitlint": "commitlint --edit"
-  },
-  "engines": {
-    "node": ">=16.x"
   },
   "husky": {
     "hooks": {

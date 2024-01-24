@@ -1,41 +1,73 @@
-// TODO:: lambda event sourcing from sqs
-
+import pathToFfmpeg from "ffmpeg-static";
 import "reflect-metadata";
 import { PassThrough } from "stream";
 import { container } from "tsyringe";
+const { spawn } = require("child_process");
 
 import { PushToSqsType } from "@shared/@types/aws.type";
 import { SQSEvent } from "@shared/enum/aws.enum";
 import { AWSs3 } from "@shared/utils/aws/s3.util";
+import { AWSSqs } from "@shared/utils/aws/sqs.util";
 import { YoutubeDL } from "@shared/utils/youtube-dl/youtube-dl.util";
 
 const youtubeDl = container.resolve(YoutubeDL);
 const s3 = container.resolve(AWSs3);
+const sqs = container.resolve(AWSSqs);
 
-export const handler = async (event, context) => {
+export const handler = async (event, _context) => {
   const parsedEvent: PushToSqsType =
     typeof event === "object" ? event : JSON.parse(event);
+
+  const defaultResponse = {
+    status: "success",
+    message: "Event processed successfully",
+    data: {
+      _meta: {
+        event_type: parsedEvent.event_type,
+        media_id: parsedEvent.video_id,
+      },
+    },
+  };
 
   if (
     parsedEvent.event_type === SQSEvent.PROCESS_MEDIA_DOWNLOAD &&
     parsedEvent.video_id
   ) {
-    // TODO:: Schedule retries if the return value is null or undefined
-    await processMediaDownload(parsedEvent.video_id);
-    return;
+    await performNewMediaUploadActions(parsedEvent.video_id, parsedEvent.email);
+    return defaultResponse;
   }
 
-  return {
-    health: "Okay",
-    context,
-    event,
-  };
+  return defaultResponse;
 };
 
-// const processMediaStreamToSpotify = async () => {
-//   try {
-//   } catch (error) {}
-// };
+const performNewMediaUploadActions = async (
+  video_id: string,
+  email: string,
+) => {
+  const mediaDownloadResponse = await processMediaDownload(video_id);
+
+  if (!mediaDownloadResponse) {
+    /** Re-EnQueue */
+  }
+
+  await sqs.push({
+    video_id,
+    event_type: SQSEvent.PROCESS_MEDIA_STREAM,
+    email,
+  });
+};
+
+export const performMediaStreamToUserActions = async () => {
+  try {
+  } catch (error) {}
+};
+
+export const sendPresignedMediaUrl = async (videoId: string, email: string) => {
+  try {
+  } catch (error) {
+    return null;
+  }
+};
 
 /**
  * Get youtube media mp3 and stream directly to s3 bucket instead of downloading locally
@@ -43,17 +75,51 @@ export const handler = async (event, context) => {
  */
 const processMediaDownload = async (videoId: string) => {
   try {
-    const audioStream = youtubeDl.getAudioStream(videoId);
+    console.log(
+      `[lambda]: processMediaDownload ====> Attempting media download for video ${videoId}`,
+    );
 
-    const ps = new PassThrough();
-    audioStream?.pipe(ps);
+    const audioStream = await youtubeDl.getAudioStream(videoId);
+    const passThroughStream = new PassThrough();
 
-    const resp = await s3.upload(ps, videoId);
-    console.log(`Media ${videoId} uploaded to S3 successfully`, resp);
+    const fmp = spawn(pathToFfmpeg, [
+      "-i",
+      "pipe:0",
+      "-b:a",
+      "192k",
+      "-f",
+      "mp3",
+      "pipe:1",
+    ]);
 
-    return "success";
+    audioStream?.pipe(fmp.stdin);
+
+    const data: Buffer[] = [];
+    fmp.stdout.on("data", (_data) => {
+      data.push(_data);
+    });
+
+    fmp.stdout.on("end", () => {
+      console.log("[lambda]: processMediaDownload ====> FFmpeg process ended");
+      s3.upload(Buffer.concat(data), videoId);
+    });
+
+    const streamEnded = new Promise<boolean>((resolve) => {
+      passThroughStream.on("end", () => {
+        resolve(true);
+      });
+    });
+
+    await streamEnded;
+
+    return;
   } catch (error) {
-    console.error("Error processing media stream to S3:", error.message);
+    console.error(
+      "[lambda]: processMediaDownload Error ===> processing media stream to S3:",
+      error.message,
+      error,
+    );
+
     return null;
   }
 };

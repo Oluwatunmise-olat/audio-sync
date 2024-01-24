@@ -1,10 +1,9 @@
 import app from "./app";
 
 async function bootstrap() {
-  const PORT = 1124;
+  const PORT = 1124; // Cleanup after deployment to use env;
   const server = app.listen(PORT);
 
-  // Handle Graceful Shutdown
   process
     .on("uncaughtException", (error) => {
       console.error("Uncaught exception", { err: error });
@@ -16,7 +15,7 @@ async function bootstrap() {
       process.exit(1);
     });
 
-  console.log("server started 🚀");
+  console.log("[app]: server started ✅");
 }
 
 bootstrap();

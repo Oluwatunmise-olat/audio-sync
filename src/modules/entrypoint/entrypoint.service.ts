@@ -8,9 +8,10 @@ import { AWSDynamoDB } from "@shared/utils/aws/dynamodb.util";
 import { AWSSqs } from "@shared/utils/aws/sqs.util";
 import { YoutubeDL } from "@shared/utils/youtube-dl/youtube-dl.util";
 
-// TODO: Factor in spotify validation
-// Max video length of 30 mins due
-// Email for notification ses
+// TODO:
+// Add Validation: Max video length of 30 mins due to limited compute resource
+// Setup: Email for notification using ses
+// Setup: sqs as event source for lambda
 @injectable()
 export class EntryPointService {
   constructor(
@@ -21,13 +22,15 @@ export class EntryPointService {
 
   async validateVideoIdAndProcessRequest({
     video_id,
+    email,
   }: ValidateVideoIdAndProcessRequestType): Promise<IServiceHelper> {
     try {
       const _successMessage =
         "Your request has been received and would be processed shortly.";
+
       const mediaRecord = await this.dynamodb.getRecord(video_id);
       if (mediaRecord) {
-        await this.pushToQueue(video_id, SQSEvent.PROCESS_MEDIA_STREAM);
+        await this.pushToQueue(video_id, email, SQSEvent.PROCESS_MEDIA_STREAM);
         return { status: "successful", message: _successMessage };
       }
 
@@ -38,6 +41,7 @@ export class EntryPointService {
       const { status, message } = await this.processNewMediaUpload(
         metaData as any,
         video_id,
+        email,
       );
       if (!status) return { status: "bad-request", message };
 
@@ -54,6 +58,7 @@ export class EntryPointService {
   private async processNewMediaUpload(
     payload: VideoMetaDataType,
     video_id: string,
+    recipient_email: string,
   ) {
     const uploaded = await this.dynamodb.save({
       duration: payload.duration,
@@ -71,15 +76,24 @@ export class EntryPointService {
       };
     }
 
-    await this.pushToQueue(video_id, SQSEvent.PROCESS_MEDIA_DOWNLOAD);
+    await this.pushToQueue(
+      video_id,
+      recipient_email,
+      SQSEvent.PROCESS_MEDIA_DOWNLOAD,
+    );
 
     return { status: true, message: "processed" };
   }
 
-  private async pushToQueue(video_id: string, event_type: SQSEvent) {
+  private async pushToQueue(
+    video_id: string,
+    recipient_email: string,
+    event_type: SQSEvent,
+  ) {
     await this.sqs.push({
       video_id,
       event_type,
+      email: recipient_email,
     });
   }
 }

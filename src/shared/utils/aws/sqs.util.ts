@@ -5,6 +5,7 @@ import {
   SendMessageCommandInput,
 } from "@aws-sdk/client-sqs";
 import { singleton } from "tsyringe";
+import { randomUUID } from "crypto";
 
 import { PushToSqsType } from "@shared/@types/aws.type";
 import conf from "@config/conf";
@@ -26,6 +27,7 @@ export class AWSSqs {
       const params: SendMessageCommandInput = {
         QueueUrl: this.queueURL,
         MessageBody: JSON.stringify(payload),
+        MessageGroupId: randomUUID(),
       };
 
       await this.sqs.send(new SendMessageCommand(params));

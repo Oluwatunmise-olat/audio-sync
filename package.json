@@ -42,6 +42,7 @@
   "scripts": {
     "app:build": "rm -rf dist && tsc && tsc-alias",
     "start:dev": "ts-node -r module-alias/register ./src/server.ts",
+    "start:prod": "node ./dist/server.js",
     "commitlint": "commitlint --edit"
   },
   "husky": {

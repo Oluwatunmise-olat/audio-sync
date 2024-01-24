@@ -14,5 +14,7 @@ export const entryPointRoutes = (routerInstance: Router) => {
     _baseController.validateVideoIdAndProcessRequest,
   );
 
+  routerInstance.get(`/${_routePrefix}/test`, _baseController.testRoute);
+
   return routerInstance;
 };

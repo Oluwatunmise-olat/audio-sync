@@ -10,8 +10,7 @@ import { YoutubeDL } from "@shared/utils/youtube-dl/youtube-dl.util";
 
 // TODO:
 // Add Validation: Max video length of 30 mins due to limited compute resource
-// Setup: Email for notification using ses
-// Setup: sqs as event source for lambda
+
 @injectable()
 export class EntryPointService {
   constructor(
@@ -20,7 +19,7 @@ export class EntryPointService {
     private readonly sqs: AWSSqs,
   ) {}
 
-  async validateVideoIdAndProcessRequest({
+  public async validateVideoIdAndProcessRequest({
     video_id,
     email,
   }: ValidateVideoIdAndProcessRequestType): Promise<IServiceHelper> {
@@ -53,6 +52,10 @@ export class EntryPointService {
           "Could not process your request at the moment. Please try again later",
       };
     }
+  }
+
+  public async testServices(): Promise<IServiceHelper> {
+    return { status: "successful", message: "Successful Api Call" };
   }
 
   private async processNewMediaUpload(
@@ -97,3 +100,5 @@ export class EntryPointService {
     });
   }
 }
+
+// connect to dynamodb, sqs and ses from render

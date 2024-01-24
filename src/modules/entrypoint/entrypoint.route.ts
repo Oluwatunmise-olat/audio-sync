@@ -6,7 +6,7 @@ import { validate } from "@shared/interceptors/validator.interceptor";
 import { Segments } from "celebrate";
 import { entrypointRule } from "@shared/validations/entrypoint.validation";
 
-const _baseController = container.resolve(EntryPointController);
+const baseController = container.resolve(EntryPointController);
 
 export const entryPointRoutes = (routerInstance: Router) => {
   const _routePrefix = "entrypoint";
@@ -14,10 +14,10 @@ export const entryPointRoutes = (routerInstance: Router) => {
   routerInstance.post(
     `/${_routePrefix}/upload`,
     validate<typeof entrypointRule>(Segments.BODY, entrypointRule),
-    _baseController.validateVideoIdAndProcessRequest,
+    baseController.validateVideoIdAndProcessRequest,
   );
 
-  routerInstance.get(`/${_routePrefix}/test`, _baseController.testRoute);
+  routerInstance.get(`/${_routePrefix}/test`, baseController.testRoute);
 
   return routerInstance;
 };

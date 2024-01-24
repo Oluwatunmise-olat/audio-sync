@@ -8,14 +8,17 @@ import {
 import { singleton } from "tsyringe";
 
 import { SaveMetaDataToDynamodbType } from "@shared/@types/aws.type";
-import { awsConf } from "./constants";
+import conf from "@config/conf";
 
 @singleton()
 export class AWSDynamoDB {
   private table = "media_metadata";
 
   private readonly dynamodb = new DynamoDBClient({
-    endpoint: awsConf.endpoint,
+    credentials: {
+      accessKeyId: conf.aws.access_key_id,
+      secretAccessKey: conf.aws.secret_access_key,
+    },
   });
 
   async save(payload: SaveMetaDataToDynamodbType) {

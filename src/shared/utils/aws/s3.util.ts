@@ -2,12 +2,17 @@ import { singleton } from "tsyringe";
 const { S3 } = require("aws-sdk");
 
 import { awsConf } from "./constants";
+import conf from "@config/conf";
 
 @singleton()
 export class AWSs3 {
   private readonly s3 = new S3({
     apiVersion: "4",
-    region: "us-east-1",
+    region: conf.aws.region,
+    credentials: {
+      accessKeyId: conf.aws.access_key_id,
+      secretAccessKey: conf.aws.secret_access_key,
+    },
   });
 
   public async upload(mediaStream, videoId: string) {

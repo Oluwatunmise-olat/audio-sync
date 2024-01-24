@@ -7,6 +7,7 @@ import { SQSEvent } from "@shared/enum/aws.enum";
 import { AWSDynamoDB } from "@shared/utils/aws/dynamodb.util";
 import { AWSSqs } from "@shared/utils/aws/sqs.util";
 import { YoutubeDL } from "@shared/utils/youtube-dl/youtube-dl.util";
+import conf from "@config/conf";
 
 // TODO:
 // Add Validation: Max video length of 30 mins due to limited compute resource
@@ -55,7 +56,11 @@ export class EntryPointService {
   }
 
   public async testServices(): Promise<IServiceHelper> {
-    return { status: "successful", message: "Successful Api Call" };
+    return {
+      status: "successful",
+      message: "Successful Api Call",
+      data: { _meta: conf.aws.sqs.url }, // Remove after testing
+    };
   }
 
   private async processNewMediaUpload(

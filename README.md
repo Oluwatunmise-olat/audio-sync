@@ -6,7 +6,7 @@
   <br>
 </h1>
 
-<h4 align="center">Serverless solution that allows you to download audio from a YouTube video, and provides a secure link to download the audio file locally to any device. It leverages AWS Lambda, S3, Dynamo DB and SQS to automate the process.</h4>
+<h4 align="center">Serverless solution that allows you to download audio from a YouTube video, and provides a secure link to download the audio file locally to any device via mail. Leverages AWS Lambda, S3, Dynamo DB and SQS to automate the process.</h4>
 
 ## 📇 API Documentation
 

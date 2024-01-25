@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://github.com/Oluwatunmise-olat"><img width="64" height="64" src="https://img.icons8.com/pastel-glyph/64/streaming-audio--v1.png" alt="audio-sync"/></a>
+  <a href="https://github.com/Oluwatunmise-olat"><img width="64" height="64" src="https://img.icons8.com/cotton/64/cloud-refresh.png" alt="audio-sync"/></a>
   <br>
   Audio Sync
   <br>

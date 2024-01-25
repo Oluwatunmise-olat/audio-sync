@@ -19,10 +19,4 @@ export class EntryPointController {
 
     return convertResponse(response, data);
   };
-
-  testRoute = async (_request: Request, response: Response) => {
-    const data = await this.entryPointService.testServices();
-
-    return convertResponse(response, data);
-  };
 }

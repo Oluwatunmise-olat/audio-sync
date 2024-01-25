@@ -48,7 +48,7 @@ export class AWSDynamoDB {
     }
   }
 
-  async getRecord(video_id: string) {
+  async getRecord(video_id: string): Promise<Record<string, any> | null> {
     try {
       const params: GetItemCommandInput = {
         Key: { video_id: { S: video_id } },
@@ -62,6 +62,7 @@ export class AWSDynamoDB {
         "[AWSDynamoDB]: getRecord Error fetching record from DynamoDB: %o",
         { error_message: error.message },
       );
+      return null;
     }
   }
 

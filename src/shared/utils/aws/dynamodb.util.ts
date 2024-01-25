@@ -1,4 +1,5 @@
 import {
+  AttributeValue,
   DynamoDBClient,
   GetItemCommand,
   GetItemCommandInput,
@@ -55,14 +56,32 @@ export class AWSDynamoDB {
       };
       const record = await this.dynamodb.send(new GetItemCommand(params));
 
-      console.log(record, "Record");
-
-      return record.Item ? record.Item.Item : null;
+      return record.Item ? this.formatRecordToJson(record.Item) : null;
     } catch (error) {
       console.error(
         "[AWSDynamoDB]: getRecord Error fetching record from DynamoDB:",
         error.message,
       );
     }
+  }
+
+  /**
+   * payload comes in form { video_id: { S: '...' }, uploader: { S: '...' } }. This function maps
+   * it to json { video_id: '...', uploader:'...'}
+   * @param payload
+   * @returns
+   */
+  private formatRecordToJson(payload: Record<string, AttributeValue>) {
+    const formattedPayload = [];
+
+    for (const [key, value] of Object.entries(payload)) {
+      const attrDataType = Object.keys(value)[0];
+      const attrValue = Object.values(value)[0];
+
+      formattedPayload[key] =
+        attrDataType === "N" ? parseInt(attrValue) : attrValue;
+    }
+
+    return formattedPayload;
   }
 }

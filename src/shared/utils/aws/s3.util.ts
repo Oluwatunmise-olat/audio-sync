@@ -1,20 +1,24 @@
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { singleton } from "tsyringe";
 const { S3 } = require("aws-sdk");
 
-import { awsConf } from "./constants";
 import conf from "@config/conf";
 import { logger } from "../logger";
+import { awsConf } from "./constants";
 
 @singleton()
 export class AWSs3 {
-  private readonly s3 = new S3({
+  private readonly _config = {
     apiVersion: "4",
     region: conf.aws.region,
     credentials: {
       accessKeyId: conf.aws.access_key_id,
       secretAccessKey: conf.aws.secret_access_key,
     },
-  });
+  };
+
+  private readonly s3 = new S3(this._config);
 
   public async upload(mediaStream, videoId: string) {
     try {
@@ -36,15 +40,17 @@ export class AWSs3 {
 
   public async getPresignedUrl(media_key: string, expiry_in_seconds = 60 * 10) {
     try {
-      const params = {
+      const command = new GetObjectCommand({
         Bucket: awsConf.bucket_name,
         Key: media_key,
-        Expires: expiry_in_seconds,
         ResponseContentType: "application/octet-stream",
         ResponseContentDisposition: "attachment",
-      };
+      });
 
-      return await this.s3.getSignedUrl("getObject", params);
+      // @ts-ignore
+      return await getSignedUrl(new S3Client(this._config), command, {
+        expiresIn: expiry_in_seconds,
+      });
     } catch (error) {
       logger.error("[AWSs3]: getPresignedUrl Error getting presigned url: %o", {
         error_message: error.message,

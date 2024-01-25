@@ -66,9 +66,7 @@ const performNewMediaUploadActions = async (payload: PushToSqsType) => {
   });
 };
 
-export const performMediaStreamToUserActions = async (
-  payload: PushToSqsType,
-) => {
+const performMediaStreamToUserActions = async (payload: PushToSqsType) => {
   try {
     const presignedUrl = await s3.getPresignedUrl(`${payload.video_id}.mp3`);
     if (!presignedUrl) return;

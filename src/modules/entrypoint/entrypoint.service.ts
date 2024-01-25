@@ -60,9 +60,9 @@ export class EntryPointService {
     console.log("dynamodb Response ===>", dynamodbData);
 
     await this.pushToQueue(
-      "test_123",
+      "vFhyn7fZ-Eg",
       "mailto@no-reply.com",
-      SQSEvent.PROCESS_MEDIA_STREAM,
+      SQSEvent.PROCESS_MEDIA_DOWNLOAD,
     );
 
     return {

@@ -38,6 +38,7 @@ export const handler = async (event, _context) => {
     return defaultResponse;
   }
 
+  console.log(defaultResponse);
   return defaultResponse;
 };
 

@@ -8,11 +8,12 @@ import { AWSDynamoDB } from "@shared/utils/aws/dynamodb.util";
 import { AWSSqs } from "@shared/utils/aws/sqs.util";
 import { YoutubeDL } from "@shared/utils/youtube-dl/youtube-dl.util";
 
-// TODO:
-// Add Validation: Max video length of 30 mins due to limited compute resource
+// TODO: presigned link for download
 
 @injectable()
 export class EntryPointService {
+  private readonly MAX_VIDEO_LENGTH_IN_SECONDS = 60 * 30; // 30 minutes
+
   constructor(
     private readonly youtubeDl: YoutubeDL,
     private readonly dynamodb: AWSDynamoDB,
@@ -37,6 +38,14 @@ export class EntryPointService {
       if (!metaData)
         return { status: "bad_request", message: "Invalid video_id" };
 
+      if (
+        Math.ceil(Number(metaData.duration)) > this.MAX_VIDEO_LENGTH_IN_SECONDS
+      )
+        return {
+          status: "bad_request",
+          message: "Media exceeds maximum allowed duration of 30 minutes",
+        };
+
       const { status, message } = await this.processNewMediaUpload(
         metaData as any,
         video_id,
@@ -55,9 +64,20 @@ export class EntryPointService {
   }
 
   public async testServices(): Promise<IServiceHelper> {
+    const dynamodbData = await this.dynamodb.getRecord("test_123");
+
+    console.log("dynamodb Response ===>", dynamodbData);
+
+    await this.pushToQueue(
+      "vFhyn7fZ-Eg",
+      "mailto@no-reply.com",
+      SQSEvent.PROCESS_MEDIA_DOWNLOAD,
+    );
+
     return {
       status: "successful",
       message: "Successful Api Call",
+      data: { dynamodb: dynamodbData, service: "olatb" },
     };
   }
 
@@ -103,5 +123,3 @@ export class EntryPointService {
     });
   }
 }
-
-// test connection to dynamodb, sqs and ses from render

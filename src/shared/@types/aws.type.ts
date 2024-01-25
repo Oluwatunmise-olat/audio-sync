@@ -4,6 +4,7 @@ export type PushToSqsType = {
   email: string;
   video_id: string;
   event_type: SQSEvent;
+  media_title?: string;
 };
 
 export type SaveMetaDataToDynamodbType = {
@@ -26,4 +27,10 @@ export type SqsEventType = {
     eventSourceARN: string;
     awsRegion: string;
   }>;
+};
+
+export type SendMailType = {
+  subject: string;
+  recipient: string;
+  template: string;
 };

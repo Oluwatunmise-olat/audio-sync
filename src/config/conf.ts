@@ -14,6 +14,7 @@ export default {
     ses: {
       user_name: value.SES_USERNAME,
       password: value.SES_PASSWORD,
+      sender_mail: value.SES_SENDER_MAIL,
     },
     sqs: {
       url: value.SQS_URL,

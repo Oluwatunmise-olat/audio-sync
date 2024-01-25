@@ -127,10 +127,10 @@ const processMediaDownload = async (videoId: string) => {
       data.push(_data);
     });
 
-    fmp.stdout.on("end", () => {
+    fmp.stdout.on("end", async () => {
       logger.info("[lambda]: processMediaDownload ====> FFmpeg process ended");
-      s3.upload(Buffer.concat(data), videoId);
-      passThroughStream.emit("finish");
+      const resp = await s3.upload(Buffer.concat(data), videoId);
+      resp ? passThroughStream.emit("finish") : null;
     });
 
     return await new Promise((resolve, reject) => {

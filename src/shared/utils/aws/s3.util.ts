@@ -35,6 +35,7 @@ export class AWSs3 {
       logger.error("[AWSs3]: upload Error uploading to S3: %o", {
         error_message: error.message,
       });
+      return null;
     }
   }
 

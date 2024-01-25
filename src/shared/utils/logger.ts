@@ -4,7 +4,7 @@ import pino from "pino";
 export const logger = pino({
   level: "info",
   redact: {
-    paths: ["email"],
+    paths: ["email", "payload.email"],
     censor: "[REDACTED FIELD]",
   },
   transport: { options: { colorize: true }, target: "pino-pretty" },

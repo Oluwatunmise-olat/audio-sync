@@ -7,6 +7,7 @@ import { SQSEvent } from "@shared/enum/aws.enum";
 import { AWSDynamoDB } from "@shared/utils/aws/dynamodb.util";
 import { AWSSqs } from "@shared/utils/aws/sqs.util";
 import { YoutubeDL } from "@shared/utils/youtube-dl/youtube-dl.util";
+import { logger } from "@shared/utils/logger";
 
 // TODO: presigned link for download
 
@@ -66,7 +67,7 @@ export class EntryPointService {
   public async testServices(): Promise<IServiceHelper> {
     const dynamodbData = await this.dynamodb.getRecord("test_123");
 
-    console.log("dynamodb Response ===>", dynamodbData);
+    logger.info("dynamodb Response ===> %o", dynamodbData);
 
     await this.pushToQueue(
       "vFhyn7fZ-Eg",
@@ -77,7 +78,7 @@ export class EntryPointService {
     return {
       status: "successful",
       message: "Successful Api Call",
-      data: { dynamodb: dynamodbData, service: "olatb" },
+      data: { dynamodb: dynamodbData, service: "audio/sync" },
     };
   }
 

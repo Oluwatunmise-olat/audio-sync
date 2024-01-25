@@ -10,6 +10,7 @@ import { singleton } from "tsyringe";
 
 import { SaveMetaDataToDynamodbType } from "@shared/@types/aws.type";
 import conf from "@config/conf";
+import { logger } from "../logger";
 
 @singleton()
 export class AWSDynamoDB {
@@ -40,10 +41,9 @@ export class AWSDynamoDB {
       await this.dynamodb.send(new PutItemCommand(params));
       return true;
     } catch (error) {
-      console.error(
-        "[AWSDynamoDB]: save Error saving to DynamoDB:",
-        error.message,
-      );
+      logger.error("[AWSDynamoDB]: save Error saving to DynamoDB: %o", {
+        error_message: error.message,
+      });
       return false;
     }
   }
@@ -58,9 +58,9 @@ export class AWSDynamoDB {
 
       return record.Item ? this.formatRecordToJson(record.Item) : null;
     } catch (error) {
-      console.error(
-        "[AWSDynamoDB]: getRecord Error fetching record from DynamoDB:",
-        error.message,
+      logger.error(
+        "[AWSDynamoDB]: getRecord Error fetching record from DynamoDB: %o",
+        { error_message: error.message },
       );
     }
   }

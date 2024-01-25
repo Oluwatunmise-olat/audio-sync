@@ -3,6 +3,7 @@ const { S3 } = require("aws-sdk");
 
 import { awsConf } from "./constants";
 import conf from "@config/conf";
+import { logger } from "../logger";
 
 @singleton()
 export class AWSs3 {
@@ -27,7 +28,9 @@ export class AWSs3 {
 
       return await upload.promise();
     } catch (error) {
-      console.error("[AWSs3]: upload Error uploading to S3:", error.message);
+      logger.error("[AWSs3]: upload Error uploading to S3: %o", {
+        error_message: error.message,
+      });
     }
   }
 }

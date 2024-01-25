@@ -2,6 +2,8 @@ import ffmpeg from "fluent-ffmpeg";
 import { PassThrough } from "stream";
 import { injectable } from "tsyringe";
 
+import { logger } from "../logger";
+
 @injectable()
 export class FFmpeg {
   reEncodeMp3Code = (source: string) => {
@@ -13,9 +15,9 @@ export class FFmpeg {
       .audioBitrate("192k")
       .format("mp3")
       .pipe(ps, { end: true })
-      .on("end", () => console.log("FFmpeg process ended"))
+      .on("end", () => logger.info("FFmpeg process ended"))
       .on("error", (err) =>
-        console.error("Error during FFmpeg execution:", err),
+        logger.error("Error during FFmpeg execution: ===> %o", err),
       );
 
     return ps;

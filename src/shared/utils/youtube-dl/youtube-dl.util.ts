@@ -2,6 +2,7 @@ import { injectable } from "tsyringe";
 import ytdl from "ytdl-core";
 
 import { VideoMetaDataType } from "@shared/@types/youtube-dl.type";
+import { logger } from "../logger";
 
 @injectable()
 export class YoutubeDL {
@@ -26,10 +27,9 @@ export class YoutubeDL {
 
       return metadata;
     } catch (error) {
-      console.error(
-        "[YoutubeDL]: Error fetching media metadata:",
-        error.message,
-      );
+      logger.error("[YoutubeDL]: Error fetching media metadata: %o", {
+        error_message: error.message,
+      });
       return null;
     }
   }
@@ -44,10 +44,9 @@ export class YoutubeDL {
 
       return mediaStream;
     } catch (error) {
-      console.error(
-        "[YoutubeDL]: Error downloading media audio",
-        error.message,
-      );
+      logger.error("[YoutubeDL]: Error downloading media audio: %o", {
+        error_message: error.message,
+      });
       return null;
     }
   }

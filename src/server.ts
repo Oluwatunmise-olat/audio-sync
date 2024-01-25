@@ -1,6 +1,7 @@
 import "dotenv/config";
 import conf from "@config/conf";
 import app from "./app";
+import { logger } from "@shared/utils/logger";
 
 async function bootstrap() {
   const PORT = conf.app.port;
@@ -8,7 +9,7 @@ async function bootstrap() {
 
   process
     .on("uncaughtException", (error) => {
-      console.error("Uncaught exception", { err: error });
+      logger.error("Uncaught exception ===> %o", { err: error });
       server.close();
       process.exit(1);
     })
@@ -17,7 +18,7 @@ async function bootstrap() {
       process.exit(1);
     });
 
-  console.log(`[app]: server started ✅ on port ${PORT} 🚀`);
+  logger.info(`[app]: server started ✅ on port %o 🚀`, PORT);
 }
 
 bootstrap();

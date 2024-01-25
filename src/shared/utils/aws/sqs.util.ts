@@ -9,6 +9,7 @@ import { randomUUID } from "crypto";
 
 import { PushToSqsType } from "@shared/@types/aws.type";
 import conf from "@config/conf";
+import { logger } from "../logger";
 
 @singleton()
 export class AWSSqs {
@@ -33,7 +34,9 @@ export class AWSSqs {
       await this.sqs.send(new SendMessageCommand(params));
       return true;
     } catch (error) {
-      console.error("[AWSSqs]: push Error pushing to SQS:", error.message);
+      logger.error("[AWSSqs]: push Error pushing to SQS: %o", {
+        error_message: error.message,
+      });
       return null;
     }
   }
@@ -49,10 +52,9 @@ export class AWSSqs {
 
       return true;
     } catch (error) {
-      console.error(
-        "[AWSSqs]: delete Error deleting message from SQS:",
-        error.message,
-      );
+      logger.error("[AWSSqs]: delete Error deleting message from SQS: %o", {
+        error_message: error.message,
+      });
 
       return null;
     }

@@ -10,6 +10,8 @@
 
 ## 📇 API Documentation
 
+All API documentation can be found [here](https://documenter.getpostman.com/view/16498899/2s9YypFNsB).
+
 <!-- ## 👷🏽‍♂️ Installation And Usage -->
 
 ### 🚧 TODO

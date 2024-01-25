@@ -33,4 +33,23 @@ export class AWSs3 {
       });
     }
   }
+
+  public async getPresignedUrl(media_key: string, expiry_in_seconds = 60 * 10) {
+    try {
+      const params = {
+        Bucket: awsConf.bucket_name,
+        Key: media_key,
+        Expires: expiry_in_seconds,
+        ResponseContentType: "application/octet-stream",
+        ResponseContentDisposition: "attachment",
+      };
+
+      return await this.s3.getSignedUrl("getObject", params);
+    } catch (error) {
+      logger.error("[AWSs3]: getPresignedUrl Error getting presigned url: %o", {
+        error_message: error.message,
+      });
+      return null;
+    }
+  }
 }

@@ -29,7 +29,9 @@ export const handler = async (event: SqsEventType, _context) => {
   if (!sqsEvent) return defaultResponse;
 
   const parsedEvent: PushToSqsType =
-    typeof sqsEvent.body === "object" ? event : JSON.parse(sqsEvent.body);
+    typeof sqsEvent.body === "object"
+      ? sqsEvent.body
+      : JSON.parse(sqsEvent.body);
 
   switch (parsedEvent.event_type) {
     case SQSEvent.PROCESS_MEDIA_DOWNLOAD:
@@ -118,6 +120,8 @@ const processMediaDownload = async (videoId: string) => {
 
     audioStream?.pipe(fmp.stdin);
 
+    fmp.on("error", () => passThroughStream.emit("error", null));
+
     const data: Buffer[] = [];
     fmp.stdout.on("data", (_data) => {
       data.push(_data);
@@ -126,17 +130,13 @@ const processMediaDownload = async (videoId: string) => {
     fmp.stdout.on("end", () => {
       logger.info("[lambda]: processMediaDownload ====> FFmpeg process ended");
       s3.upload(Buffer.concat(data), videoId);
+      passThroughStream.emit("finish");
     });
 
-    const streamEnded = new Promise<boolean>((resolve) => {
-      passThroughStream.on("end", () => {
-        resolve(true);
-      });
+    return await new Promise((resolve, reject) => {
+      passThroughStream.on("finish", () => resolve(true));
+      passThroughStream.on("error", () => reject(null));
     });
-
-    await streamEnded;
-
-    return true;
   } catch (error) {
     logger.error(
       "[lambda]: processMediaDownload Error ===> processing media stream to S3: %o",

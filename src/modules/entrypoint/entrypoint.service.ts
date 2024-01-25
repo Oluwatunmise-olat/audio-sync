@@ -8,7 +8,9 @@ import { AWSDynamoDB } from "@shared/utils/aws/dynamodb.util";
 import { AWSSqs } from "@shared/utils/aws/sqs.util";
 import { YoutubeDL } from "@shared/utils/youtube-dl/youtube-dl.util";
 
-// TODO:: Prod ses access and infra scripts
+// TODO:: Prod ses access
+// Post deployment script to build app, push to Aws ecr on merge or push to master and deploy to lambda
+// Infra provisioning script (terraform)
 
 @injectable()
 export class EntryPointService {

@@ -36,6 +36,7 @@ export class AWSSqs {
     } catch (error) {
       logger.error("[AWSSqs]: push Error pushing to SQS: %o", {
         error_message: error.message,
+        error,
       });
       return null;
     }

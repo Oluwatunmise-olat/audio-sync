@@ -23,6 +23,8 @@ export const handler = async (event: SqsEventType, _context) => {
     message: "Event processed successfully",
   };
 
+  logger.info("[lambda]: handler: New Lambda Event ===> %o", { event });
+
   const sqsEvent = event.Records[0];
   if (!sqsEvent) return defaultResponse;
 

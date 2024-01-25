@@ -8,11 +8,12 @@ import { AWSDynamoDB } from "@shared/utils/aws/dynamodb.util";
 import { AWSSqs } from "@shared/utils/aws/sqs.util";
 import { YoutubeDL } from "@shared/utils/youtube-dl/youtube-dl.util";
 
-// TODO:
-// Add Validation: Max video length of 30 mins due to limited compute resource
+// TODO: presigned link for download
 
 @injectable()
 export class EntryPointService {
+  private readonly MAX_VIDEO_LENGTH_IN_SECONDS = 60 * 30; // 30 minutes
+
   constructor(
     private readonly youtubeDl: YoutubeDL,
     private readonly dynamodb: AWSDynamoDB,
@@ -36,6 +37,14 @@ export class EntryPointService {
       const metaData = await this.youtubeDl.getMetadata(video_id);
       if (!metaData)
         return { status: "bad_request", message: "Invalid video_id" };
+
+      if (
+        Math.ceil(Number(metaData.duration)) > this.MAX_VIDEO_LENGTH_IN_SECONDS
+      )
+        return {
+          status: "bad_request",
+          message: "Media exceeds maximum allowed duration of 30 minutes",
+        };
 
       const { status, message } = await this.processNewMediaUpload(
         metaData as any,

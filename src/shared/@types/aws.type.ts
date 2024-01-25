@@ -13,3 +13,17 @@ export type SaveMetaDataToDynamodbType = {
   upload_date: string;
   video_id: string;
 };
+
+export type SqsEventType = {
+  Records: Array<{
+    messageId: string;
+    receiptHandle: string;
+    body: string;
+    attributes: [Object];
+    messageAttributes: {};
+    md5OfBody: string;
+    eventSource: string;
+    eventSourceARN: string;
+    awsRegion: string;
+  }>;
+};

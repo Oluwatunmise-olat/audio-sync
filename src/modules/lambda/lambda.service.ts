@@ -4,7 +4,7 @@ import { PassThrough } from "stream";
 import { container } from "tsyringe";
 const { spawn } = require("child_process");
 
-import { PushToSqsType } from "@shared/@types/aws.type";
+import { PushToSqsType, SqsEventType } from "@shared/@types/aws.type";
 import { SQSEvent } from "@shared/enum/aws.enum";
 import { AWSs3 } from "@shared/utils/aws/s3.util";
 import { AWSSqs } from "@shared/utils/aws/sqs.util";
@@ -14,21 +14,18 @@ const youtubeDl = container.resolve(YoutubeDL);
 const s3 = container.resolve(AWSs3);
 const sqs = container.resolve(AWSSqs);
 
-export const handler = async (event, _context) => {
-  const parsedEvent: PushToSqsType =
-    typeof event === "object" ? event : JSON.parse(event);
-
-  const defaultResponse = {
+export const handler = async (event: SqsEventType, _context) => {
+  let defaultResponse: object = {
     status: "success",
     message: "Event processed successfully",
-    data: {
-      _meta: {
-        event_type: parsedEvent.event_type,
-        media_id: parsedEvent.video_id,
-        record: event?.Records ?? "",
-      },
-    },
   };
+
+  const sqsEvent = event.Records[0];
+
+  if (!sqsEvent) return defaultResponse;
+
+  const parsedEvent: PushToSqsType =
+    typeof sqsEvent.body === "object" ? event : JSON.parse(sqsEvent.body);
 
   if (
     parsedEvent.event_type === SQSEvent.PROCESS_MEDIA_DOWNLOAD &&
@@ -38,7 +35,6 @@ export const handler = async (event, _context) => {
     return defaultResponse;
   }
 
-  console.log(defaultResponse);
   return defaultResponse;
 };
 

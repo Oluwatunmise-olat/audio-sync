@@ -72,7 +72,7 @@ export class AWSDynamoDB {
    * @returns
    */
   private formatRecordToJson(payload: Record<string, AttributeValue>) {
-    const formattedPayload = [];
+    const formattedPayload = {};
 
     for (const [key, value] of Object.entries(payload)) {
       const attrDataType = Object.keys(value)[0];

@@ -35,6 +35,7 @@ jobs:
 
       - name: Build and Push Docker Image to Amazon ECR
         run: |
+          aws ecr get-login-password --region ${{ secrets.REGION }} | docker login --username AWS --password-stdin ${{ secrets.REGISTRY_URL }}
           docker build -t ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest -f Dockerfile .
           docker push ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest
 

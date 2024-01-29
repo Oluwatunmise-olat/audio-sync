@@ -52,7 +52,7 @@ jobs:
 
       - name: Build and Push Docker Image to Amazon ECR
         run: |
-          docker build -t ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest -f Dockerfile $BUILD_PATH
+          docker build -t ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest .
           docker push ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest
       - name: Deploy to Lambda
         run: |

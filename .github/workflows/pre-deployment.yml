@@ -24,10 +24,10 @@ jobs:
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
       - name: Build Application
-        id: build-app
         run: |
           yarn run app:build
           echo "BUILD_PATH=./dist" >> $GITHUB_ENV
+          echo "::set-output name=BUILD_PATH::./dist"
 
   build_docker_image_and_push_to_ecr:
     runs-on: ubuntu-latest
@@ -43,19 +43,18 @@ jobs:
           aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.REGION }}
 
-      - name: Login to AWS ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-
       - name: Set Build Input
         run: echo "BUILD_PATH=${{ needs.build_app.outputs.BUILD_PATH }}" >> $GITHUB_ENV
+
+      - name: Echo BUILD_PATH
+        run: echo ${{ needs.build_app.outputs.BUILD_PATH }}
 
       - name: Copy Dist Directory
         run: cp -R ${{ needs.build_app.outputs.BUILD_PATH }} .
 
       - name: Build and Push Docker Image to Amazon ECR
         run: |
-          docker build -t ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest .
+          docker build -t ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest -f Dockerfile .
           docker push ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest
       - name: Deploy to Lambda
         run: |

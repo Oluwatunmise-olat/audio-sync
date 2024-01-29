@@ -50,6 +50,9 @@ jobs:
       - name: Set Build Input
         run: echo "BUILD_PATH=${{ needs.build_app.outputs.BUILD_PATH }}" >> $GITHUB_ENV
 
+      - name: Copy Dist Directory
+        run: cp -R $BUILD_PATH .
+
       - name: Build and Push Docker Image to Amazon ECR
         run: |
           docker build -t ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest .

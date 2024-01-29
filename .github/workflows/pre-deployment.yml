@@ -14,17 +14,19 @@ jobs:
     steps:
       - name: Pull Repository
         uses: actions/checkout@v2
+
       - name: Setup and Install Node.Js
         uses: actions/setup-node@v3.4.1
         with:
           node-version: "18.x"
           cache: "yarn"
+
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
+
       - name: Build Application
         run: |
           yarn run app:build
-          echo "BUILD_PATH=./dist" >> $GITHUB_ENV
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1

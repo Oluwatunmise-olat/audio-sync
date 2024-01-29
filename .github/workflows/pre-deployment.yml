@@ -22,7 +22,9 @@ jobs:
       - name: Install Dependencies
         run: yarn install --frozen-lockfile
       - name: Build Application
-        run: yarn run app:build
+        run: |
+          yarn run app:build
+          echo "BUILD_PATH=./dist" >> $GITHUB_ENV
 
   build_docker_image_and_push_to_ecr:
     runs-on: ubuntu-latest
@@ -42,9 +44,12 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      - name: Set Build Input
+        run: echo "BUILD_PATH=${{ needs.build_app.outputs.BUILD_PATH }}" >> $GITHUB_ENV
+
       - name: Build and Push Docker Image to Amazon ECR
         run: |
-          docker build -t ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest .
+          docker build -t ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest . $BUILD_PATH
           docker push ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest
       - name: Deploy to Lambda
         run: |

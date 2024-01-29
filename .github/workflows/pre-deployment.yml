@@ -9,10 +9,8 @@ on:
       - master
 
 jobs:
-  build_app:
+  pre_deploy:
     runs-on: ubuntu-latest
-    outputs:
-      BUILD_PATH: ${{ steps.build-app.outputs.BUILD_PATH }}
     steps:
       - name: Pull Repository
         uses: actions/checkout@v2
@@ -27,14 +25,6 @@ jobs:
         run: |
           yarn run app:build
           echo "BUILD_PATH=./dist" >> $GITHUB_ENV
-          echo "::set-output name=BUILD_PATH::./dist"
-
-  build_docker_image_and_push_to_ecr:
-    runs-on: ubuntu-latest
-    needs: build_app
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v2
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -43,19 +33,11 @@ jobs:
           aws-secret-access-key: ${{ secrets.SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.REGION }}
 
-      - name: Set Build Input
-        run: echo "BUILD_PATH=${{ needs.build_app.outputs.BUILD_PATH }}" >> $GITHUB_ENV
-
-      - name: Echo BUILD_PATH
-        run: echo ${{ needs.build_app.outputs.BUILD_PATH }}
-
-      - name: Copy Dist Directory
-        run: cp -R ${{ needs.build_app.outputs.BUILD_PATH }} .
-
       - name: Build and Push Docker Image to Amazon ECR
         run: |
           docker build -t ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest -f Dockerfile .
           docker push ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest
+
       - name: Deploy to Lambda
         run: |
           aws lambda update-function-code --function-name ${{ secrets.FUNCTION_NAME }} --image-uri ${{ secrets.REGISTRY_URL }}/${{ secrets.REPOSITORY_NAME }}:latest

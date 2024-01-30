@@ -2,7 +2,7 @@
 ///////////// DynamoDB ///////////////////
 //////////////////////////////////////////
 resource "aws_dynamodb_table" "audio_sync" {
-  name         = "audio_sync_x"
+  name         = "audio_sync_x" // <- Name should align with code
   billing_mode = "PAY_PER_REQUEST"
   hash_key     = "video_id"
 
@@ -16,7 +16,7 @@ resource "aws_dynamodb_table" "audio_sync" {
 ///////////// Create S3 Bucket ///////////
 //////////////////////////////////////////
 resource "aws_s3_bucket" "audio_sync_s3" {
-  bucket        = "audio-sync-s3-bucket-prem"
+  bucket        = "audio-sync-s3-bucket-prem" // <- Bucket name should align with code
   force_destroy = true
 }
 
@@ -64,7 +64,7 @@ resource "aws_sqs_queue" "audio_sync_fifo_queue" {
 //////////////////////////////////////////
 resource "aws_ecr_repository" "audio_sync_ecr" {
   name                 = "audio_sync"
-  image_tag_mutability = "IMMUTABLE"
+  image_tag_mutability = "MUTABLE"
 
   image_scanning_configuration {
     scan_on_push = true
@@ -122,6 +122,12 @@ resource "aws_lambda_function" "audio_sync_lambda_function" {
   memory_size   = 1024
   timeout       = 900
   role          = aws_iam_role.lambda_role.arn
+  environment {
+    variables = {
+      "SES_SENDER_MAIL" = "test@gmail.com" // <- use your verified email address,
+      "SQS_URL" = aws_sqs_queue.audio_sync_fifo_queue.url
+    }
+  }
 
   logging_config {
     log_format = "JSON"

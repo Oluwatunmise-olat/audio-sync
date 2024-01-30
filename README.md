@@ -22,3 +22,7 @@ All API documentation can be found [here](https://documenter.getpostman.com/view
 
 - Max video length accepted is 30 minutes
 - The public api routes (for media uploads) is hosted on render (free tier) which takes some time to boot back up after moments of inactivity, so you might experience slow api calls if the server has gone into an inactive state
+
+### ⛓️ Infrastructure Provisioning
+
+The Terraform scripts in this repository define the infrastructure components required for the application. Here is a brief overview of the components:

@@ -25,7 +25,6 @@ export class AWSDynamoDB {
 
   async save(payload: SaveMetaDataToDynamodbType) {
     try {
-      // TODO: Rethink schema
       const params: PutItemInput = {
         TableName: this.table,
         Item: {
